@@ -106,6 +106,7 @@ module Kitchen
         setup_cmd << "gem_bindir=`#{config[:ruby_bindir]}/ruby -rrubygems -e \"puts Gem.bindir\"`"
         setup_cmd << "#{sudo}${gem_bindir}/busser setup"
         setup_cmd << "#{sudo}#{config[:busser_bin]} plugin install #{plugins.join(' ')}"
+        setup_cmd << %<sed -i -e "s/run(\\"PATH=.*bundle install\\")/run(\\"\#{Gem.bindir}\\/bundle install\\")/" ${gem_bindir}/../gems/busser-rspec-*/lib/busser/runner_plugin/rspec.rb> if plugins.include? 'busser-rspec'
 
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         "sh -c '#{setup_cmd.join('; ')}'"
